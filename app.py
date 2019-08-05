@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.schema import CreateTable
 # from sqlalchemy import Table, Column, String, MetaData, Integer, DateTime, create_engine
@@ -23,13 +23,19 @@ db.create_all()
 
 @app.route('/postnotes', methods=["GET", "POST"])
 def hello_world():
-    some_json = request.get_json()
     if (request.method == "POST"):
         some_json = request.get_json()
         db.session.add(Notes(some_json['name'], some_json['note']))
-        return jsonify({'you sent': some_json}), 201
+        db.session.commit()
+        return jsonify("ok"), 201
     elif (request.method == 'GET'):
-        return jsonify(Notes.query.all())
+        db_resp = Notes.query.all()
+        response = {}
+        for note in db_resp:
+            name = note.name
+            note_for_response = note.note
+            response[name] = note_for_response
+        return jsonify(response)
 
 @app.route('/default', methods=["GET", "POST"])
 def default():
