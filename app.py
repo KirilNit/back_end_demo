@@ -1,14 +1,12 @@
 from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.schema import CreateTable
-# from sqlalchemy import Table, Column, String, MetaData, Integer, DateTime, create_engine
+from flask_cors import CORS
 from sqlalchemy import *
-from sqlalchemy.dialects import postgresql
-from sqlalchemy.ext.declarative import declarative_base
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@127.0.0.1:5433/postgres"
 db = SQLAlchemy(app)
+cors = CORS(app, resources={r'/*':{'origins':'*'}})
 
 class Notes(db.Model):
     id = Column(db.Integer, primary_key=True)
@@ -22,6 +20,7 @@ class Notes(db.Model):
 db.create_all()
 
 @app.route('/postnotes', methods=["GET", "POST"])
+# @cross_origin()
 def hello_world():
     if (request.method == "POST"):
         some_json = request.get_json()
