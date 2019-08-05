@@ -30,11 +30,13 @@ def hello_world():
         return jsonify("ok"), 201
     elif (request.method == 'GET'):
         db_resp = Notes.query.all()
-        response = {}
+        response = []
         for note in db_resp:
-            name = note.name
-            note_for_response = note.note
-            response[name] = note_for_response
+            note_for_append = {}
+            note_for_append['id'] = note.id
+            note_for_append['name'] = note.name
+            note_for_append['note'] = note.note
+            response.append(note_for_append)
         return jsonify(response)
 
 @app.route('/default', methods=["GET", "POST"])
